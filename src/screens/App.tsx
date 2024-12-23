@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Image, Button, StyleSheet, Text } from 'react-native';
+import { View, FlatList, Image, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import Navbar from '../components/Navbar';
 import { fetchTrends } from '../utils/fetchTrends';
 import { fetchProducts } from '../utils/fetchProducts';
@@ -36,16 +36,19 @@ export default function App() {
           <View style={styles.card}>
             <Text style={styles.title}>{item.name}</Text>
             <Text style={styles.description}>{item.description}</Text>
-            <Button
-              title={visibleProductIds.has(item.id) ? 'Hide Products' : 'Show Products'}
+            <TouchableOpacity
+              style={styles.button}
               onPress={() => {
                 fetchProducts(item).then((products) => {
                   setTrendProducts(prevState => new Map(prevState).set(item.id, products));
                 });
                 toggleProductVisibility(item.id);
               }}
-              color="#D81B60"
-            />
+            >
+              <Text style={styles.buttonText}>
+                {visibleProductIds.has(item.id) ? 'Hide Products' : 'Show Products'}
+              </Text>
+            </TouchableOpacity>
             {visibleProductIds.has(item.id) && trendProducts.has(item.id) && (
               <FlatList
                 data={trendProducts.get(item.id)}
@@ -54,7 +57,12 @@ export default function App() {
                   <View style={styles.productCard}>
                     <Text style={styles.productTitle}>{item.name}</Text>
                     <Image source={{ uri: item.image }} style={styles.productImage} />
-                    <Button title="Buy Now" onPress={() => window.open(item.link)} color="#D81B60" />
+                    <TouchableOpacity
+                      style={styles.buyButton}
+                      onPress={() => window.open(item.link)}
+                    >
+                      <Text style={styles.buyButtonText}>Buy Now</Text>
+                    </TouchableOpacity>
                   </View>
                 )}
               />
@@ -70,52 +78,79 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1, 
     paddingHorizontal: 10, 
-    backgroundColor: '#F8BBD0', 
-    margin: 0,
+    backgroundColor: '#F3E5F5', 
   },
   card: { 
     padding: 20, 
-    marginBottom: 15, 
+    marginTop: 20,
+    marginBottom: 20, 
     backgroundColor: '#fff', 
-    borderRadius: 15, 
+    borderRadius: 20, 
     width: '100%', 
     shadowColor: '#000', 
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
     elevation: 5,
   },
   title: { 
-    fontSize: 20, 
+    fontSize: 22, 
     fontWeight: 'bold', 
     color: '#D81B60', 
   },
   description: { 
-    fontSize: 14, 
+    fontSize: 16, 
     marginVertical: 10, 
-    color: '#333', 
+    color: '#444', 
+    lineHeight: 22,
+  },
+  button: {
+    marginTop: 10,
+    paddingVertical: 10,
+    backgroundColor: '#D81B60',
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: '600',
   },
   productCard: { 
     marginTop: 15,
-    padding: 15,
+    padding: 20,
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 15,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
     elevation: 5,
   },
   productTitle: {
-    fontSize: 16, 
+    fontSize: 18, 
     fontWeight: 'bold', 
     marginBottom: 10, 
     color: '#333',
   },
   productImage: { 
     width: '100%', 
-    height: 200, 
-    borderRadius: 10, 
+    height: 250, 
+    borderRadius: 12, 
     marginBottom: 15, 
+    resizeMode: 'cover',
+  },
+  buyButton: {
+    paddingVertical: 12,
+    backgroundColor: '#D81B60',
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buyButtonText: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: '600',
   },
 });
